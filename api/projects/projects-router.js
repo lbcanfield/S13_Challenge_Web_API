@@ -31,13 +31,13 @@ router.post('/', validateProject, (request, response, next) => {
           .catch(next)
 })/////////////////////////////////////////////////////////////////////////////////////
 
-router.put('/:id', validateProjectId, validateProjectUpdate, (request, response, next) => {
+router.put('/:id', validateProjectId, validateProject, (request, response, next) => {
      PROJECTS.update(request.params.id, request.body)
           .then(() => {
                return PROJECTS.get(request.params.id)
           })
           .then(project => {
-               response.json(project)
+               response.json(request.body)
           })
           .catch(next)
 })//////////////////////////////////////////////////////////////////////////////////////

@@ -25,17 +25,34 @@ router.post('/', validateActionId, validateAction, async (request, response, nex
           next(error)
      }
 })
-// - [ ] `[POST] /api/actions`
-//   - Returns the newly created action as the body of the response.
-//   - If the request body is missing any of the required fields it responds with a status code 400.
-//   - When adding an action make sure the `project_id` provided belongs to an existing `project`.
+
+
+router.put('/:id', validateActionId, validateAction, (request, response, next) => {
+     ACTIONS.update(request.params.id, request.body)
+          .then(() => {
+               return ACTIONS.get(request.params.id)
+          })
+          .then(project => {
+               response.json(request.body)
+          })
+          .catch(next)
+})
 // - [ ] `[PUT] /api/actions/:id`
 //   - Returns the updated action as the body of the response.
 //   - If there is no action with the given `id` it responds with a status code 404.
 //   - If the request body is missing any of the required fields it responds with a status code 400.
-// - [ ] `[DELETE] /api/actions/:id`
-//   - Returns no response body.
-//   - If there is no action with the given `id` it responds with a status code 404.
+
+
+router.delete('/:id', validateActionId, async (request, response, next) => {
+     try {
+          await ACTIONS.remove(request.params.id)
+          response.json(request.body)
+     }
+     catch (error) {
+          next(error)
+     }
+})
+
 
 
 //Error Handling
