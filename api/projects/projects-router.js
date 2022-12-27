@@ -1,8 +1,17 @@
-// Write your "projects" router here!
+const express = require('express');
+const PROJECTS = require('./projects-model')
+
+const router = express.Router();
 
 
 
-
+router.get('/', (request, response, next) => {
+     PROJECTS.get()
+          .then(projects => {
+               response.json(projects)
+          })
+          .catch(next)
+})
 // - [ ] `[GET] /api/projects`
 //   - Returns an array of projects as the body of the response.
 //   - If there are no projects it responds with an empty array.
@@ -22,3 +31,5 @@
 // - [ ] `[GET] /api/projects/:id/actions`
 //   - Returns an array of actions (could be empty) belonging to a project with the given `id`.
 //   - If there is no project with the given `id` it responds with a status code 404.
+
+module.exports = router
