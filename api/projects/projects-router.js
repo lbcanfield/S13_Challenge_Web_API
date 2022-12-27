@@ -2,7 +2,8 @@ const express = require('express');
 const PROJECTS = require('./projects-model');
 const {
      validateProjectId,
-     validateProject
+     validateProject,
+     validateProjectUpdate
 } = require('./projects-middleware');
 
 const router = express.Router();
@@ -28,19 +29,44 @@ router.post('/', validateProject, (request, response, next) => {
                response.status(201).json(newProject)
           })
           .catch(next)
-})
-// - [ ] `[POST] /api/projects`
-//   - Returns the newly created project as the body of the response.
-//   - If the request body is missing any of the required fields it responds with a status code 400.
+})/////////////////////////////////////////////////////////////////////////////////////
+
+router.put('/:id', validateProjectId, validateProjectUpdate, (request, response, next) => {
+     PROJECTS.update(request.params.id, request.body)
+          .then(() => {
+               return PROJECTS.get(request.params.id)
+          })
+          .then(project => {
+               response.json(project)
+          })
+          .catch(next)
+})//////////////////////////////////////////////////////////////////////////////////////
 
 
 // - [ ] `[PUT] /api/projects/:id`
 //   - Returns the updated project as the body of the response.
 //   - If there is no project with the given `id` it responds with a status code 404.
 //   - If the request body is missing any of the required fields it responds with a status code 400.
-// - [ ] `[DELETE] /api/projects/:id`
-//   - Returns no response body.
-//   - If there is no project with the given `id` it responds with a status code 404.
+
+router.delete('/:id', validateProjectId, async (request, response, next) => {
+     try {
+          await PROJECTS.remove(request.params.id)
+          response.json(request.body)
+     }
+     catch (error) {
+          next(error)
+     }
+})
+
+router.get('/:id/actions', validateProjectId, async (request, response, next) => {
+     console.log(request.params.id)
+     try {
+          response.json(await PROJECTS.getProjectActions(request.params.id))
+     }
+     catch (error) {
+          next(error)
+     }
+})
 // - [ ] `[GET] /api/projects/:id/actions`
 //   - Returns an array of actions (could be empty) belonging to a project with the given `id`.
 //   - If there is no project with the given `id` it responds with a status code 404.

@@ -25,12 +25,22 @@ function validateProject(request, response, next) {
           })
      }
      else {
-          // request.project = { name: name, description: description }
+          next()
+     }
+}
+function validateProjectUpdate(request, response, next) {
+     if (!request.body.name || !request.body.description || !request.body.completed) {
+          response.status(400).json({
+               message: "missing required field"
+          })
+     }
+     else {
           next()
      }
 }
 
 module.exports = {
      validateProjectId,
-     validateProject
+     validateProject,
+     validateProjectUpdate
 }
