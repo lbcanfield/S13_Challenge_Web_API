@@ -19,17 +19,8 @@ async function validateProjectId(request, response, next) {
 }
 
 function validateProject(request, response, next) {
-     if (!request.body.name || !request.body.description) {
-          response.status(400).json({
-               message: "missing required field"
-          })
-     }
-     else {
-          next()
-     }
-}
-function validateProjectUpdate(request, response, next) {
-     if (!request.body.name || !request.body.description || !request.body.completed) {
+     const { name, description } = request.body;
+     if (!name || !description) {
           response.status(400).json({
                message: "missing required field"
           })
@@ -39,8 +30,22 @@ function validateProjectUpdate(request, response, next) {
      }
 }
 
+function updateProject(request, response, next) {
+     const { name, description, completed } = request.body;
+     // console.log(completed === undefined);
+     if (!name || !description || completed === undefined) {
+          response.status(400).json({
+               message: "missing required field"
+          })
+     }
+     else {
+          next()
+     }
+}
+
+
 module.exports = {
      validateProjectId,
      validateProject,
-     validateProjectUpdate
+     updateProject
 }

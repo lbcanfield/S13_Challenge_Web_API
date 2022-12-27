@@ -3,7 +3,7 @@ const PROJECTS = require('./projects-model');
 const {
      validateProjectId,
      validateProject,
-     validateProjectUpdate
+     updateProject
 } = require('./projects-middleware');
 
 const router = express.Router();
@@ -23,24 +23,38 @@ router.get('/:id', validateProjectId, (request, response) => {
 })
 
 
-router.post('/', validateProject, (request, response, next) => {
+router.post('/', validateProject, async (request, response, next) => {
      PROJECTS.insert(request.body)
-          .then(newProject => {
-               response.status(201).json(newProject)
-          })
-          .catch(next)
-})/////////////////////////////////////////////////////////////////////////////////////
+          .then((newItem) => {
 
-router.put('/:id', validateProjectId, validateProject, (request, response, next) => {
-     PROJECTS.update(request.params.id, request.body)
-          .then(() => {
-               return PROJECTS.get(request.params.id)
-          })
-          .then(project => {
-               response.json(request.body)
+               response.status(201).json(newItem)
           })
           .catch(next)
-})//////////////////////////////////////////////////////////////////////////////////////
+})
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+router.put('/:id', validateProjectId, updateProject, (request, response, next) => {
+     console.log(request.body)
+     PROJECTS.update(request.params.id, request.body)
+          .then((updatedItem) => {
+               response.status(201).json(updatedItem)
+          })
+          .catch(next)
+
+
+
+
+     // .then(() => {
+     //      return PROJECTS.get(request.params.id)
+     // })
+     // .then(project => {
+     //      response.json(project)
+     // })
+     // .catch(next)
+})
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 
 // - [ ] `[PUT] /api/projects/:id`
