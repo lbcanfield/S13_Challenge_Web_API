@@ -1,6 +1,6 @@
 const express = require('express');
 const ACTIONS = require('./actions-model');
-const { } = require('./actions-middlware');
+const { validateActionId, validateAction } = require('./actions-middlware');
 
 const router = express.Router();
 
@@ -11,11 +11,20 @@ router.get('/', (request, response, next) => {
           })
           .catch(next)
 })
-// - [ ] `[GET] /api/actions`
-//   - Returns an array of actions (or an empty array) as the body of the response.
-// - [ ] `[GET] /api/actions/:id`
-//   - Returns an action with the given `id` as the body of the response.
-//   - If there is no action with the given `id` it responds with a status code 404.
+
+router.get('/:id', validateActionId, (request, response, next) => {
+     response.json(request.action)
+})
+
+router.post('/', validateActionId, validateAction, async (request, response, next) => {
+     try {
+          const newAction = await ACTIONS.insert(request.body)
+          response.status(201).json(newAction)
+     }
+     catch (error) {
+          next(error)
+     }
+})
 // - [ ] `[POST] /api/actions`
 //   - Returns the newly created action as the body of the response.
 //   - If the request body is missing any of the required fields it responds with a status code 400.
